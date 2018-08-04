@@ -42,10 +42,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bank\Bank.cs" />
-    <Compile Include="Models\BankModel.cs" />
-    <Compile Include="Models\TransactionModel.cs" />
-    <Compile Include="Models\UserModel.cs" />
+    <Compile Include="App\App.cs" />
+    <Compile Include="BankAccount\BankAccount.cs" />
+    <Compile Include="BankAccount\IBankAccount.cs" />
+    <Compile Include="Models\BankModels.cs" />
+    <Compile Include="Models\TransactionModels.cs" />
+    <Compile Include="Models\UserModels.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Transaction\Transaction.cs" />
@@ -53,7 +55,9 @@
     <Compile Include="User\User.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
