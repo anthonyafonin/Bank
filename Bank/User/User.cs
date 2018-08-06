@@ -18,10 +18,10 @@ namespace Bank.UserNS
         // Constructor
         public User(UserModel req)
         {
-            UserID = req.UserID;
-            Username = req.Username;
-            UserPasswordHash = req.UserPasswordHash;
-            BankID = req.BankID;
+            this.UserID = req.UserID;
+            this.Username = req.Username;
+            this.UserPasswordHash = req.UserPasswordHash;
+            this.BankID = req.BankID;
         }
 
         /// <summary>

@@ -56,9 +56,6 @@ namespace Bank.BankAccountNS
         /// Get list of transactions
         /// </summary>
         /// <returns>Returns Transaction list</returns>
-        public List<Transaction> GetTransactionHistory()
-        {
-            return this.Transactions;
-        }
+        public List<Transaction> GetTransactionHistory() => Transactions;
     }
 }

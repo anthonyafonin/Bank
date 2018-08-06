@@ -58,6 +58,7 @@ namespace Bank.AppNS
             {
                 foreach (UserModel user in users)
                 {
+                    // if username matches and hashed password matches, find and assign bank account to current instance
                     if (request.Username == user.Username && Crypto.GetHashSalt(request.Password) == user.UserPasswordHash)
                     {
                         foreach (BankAccountModel account in bankAccounts)
