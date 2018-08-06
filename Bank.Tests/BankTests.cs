@@ -1,14 +1,21 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Bank.BankAccountNS;
+using Bank.Models;
 
-namespace Bank.Test.Tests
+namespace Bank.Tests
 {
     [TestClass]
     public class BankTests
     {
+
+
         [TestMethod]
-        public void TestMethod1()
+        public void DepositUpdatesBalance()
         {
+            double balance = 0.0;
+            double depositAmount = 50.55;
+          
         }
     }
 }

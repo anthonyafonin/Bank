@@ -1,4 +1,6 @@
 ﻿using Bank.BankAccountNS;
+using Bank.Models;
+using Bank.TransactionNS;
 using Bank.UserNS;
 using System;
 using System.Collections.Generic;
@@ -9,98 +11,128 @@ using System.Threading.Tasks;
 
 namespace Bank.AppNS
 {
-    public class App
+    public sealed class App
     {
-        private bool LoggedIn { get; set; }
-        private User CurrentUser { get; set; }
-        private BankAccount CurrentBankAccount { get; set; }
+        // Singleton
+        private static App _instance;
+        private static readonly object sync = new object();
+        private App() { }
 
-        public App() { }
-
+        // App variables
+        public bool LoggedIn { get; set; }
+        public User CurrentUser { get; set; }
+        public BankAccount CurrentBankAccount { get; set; }
+        
         /// <summary>
-        /// 
+        /// Get App singleton instance using Double-Checked locking to prevent thread locking
         /// </summary>
-        public void Initialize() 
+        /// <returns>Returns App instance</returns>
+        public static App GetApp()
         {
-            LoggedIn = false;
-            ShowMenu();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void ShowMenu()
-        {
-            ConsoleKeyInfo UserInput;
-            int selection;
-
-            Console.Clear();
-            Console.WriteLine(
-                "\n\t\tWelcome to the World's BEST Banking Ledger! " +
-                "\n\n Enter an option" +
-                "\n--------------------------\n");
-
-            try
+            if (_instance == null)
             {
-                if (!LoggedIn)
+                lock (sync)
                 {
-                    Console.WriteLine(
-                        "1. Log in\n"
-                        + "2. Create Account\n"
-                        + "0. Exit");
-
-                    selection = SelectMenuItem();
-
-                    switch (selection)
+                    if (_instance == null)
                     {
-                        case 1:
-                            Console.WriteLine("login view");
-                            break;
-                        case 2:
-                            Console.WriteLine("created acc view");
-                            break;
-                        case 0:
-                            break;
-                        default:
-                            ShowMenu();
-                            break;
+                        _instance = new App();
                     }
                 }
-                else
-                {
+            }
 
+            return _instance;
+        }
+
+        /// <summary>
+        /// Loops through list of available users and change current user to select user if credentials succeed
+        /// </summary>
+        /// <param name="request">Login request model</param>
+        /// <returns>Returns log in success status</returns>
+        public bool PerformLogin(LoginRequestModel request)
+        {
+            List<UserModel> users = CacheContext.Users;
+
+            if (users != null)
+            {
+                foreach (UserModel user in users)
+                {
+                    if (request.Username == user.Username && Crypto.GetHashSalt(request.Password) == user.UserPasswordHash)
+                    {
+                        _instance.CurrentUser = new User(user);
+                        _instance.LoggedIn = true;
+                        return true;
+                    }
                 }
             }
-            catch(Exception)
+
+            return false;
+        }
+
+        /// <summary>
+        /// Create new user if username does not exist and passwords meet requirements
+        /// </summary>
+        /// <param name="request">Register request model</param>
+        /// <returns>Register success status</returns>
+        public bool PerformRegister(RegisterRequestModel request)
+        {
+            if (request.Password != request.ConfirmPassword || request.Password.Length < 7)
             {
-                ShowMenu();
+                return false;
             }
-            Debug.WriteLine("Test");
+
+            List<UserModel> users = CacheContext.Users;
+
+            if(users != null)
+            {
+                foreach (var item in users)
+                {
+                    if (request.Username == item.Username)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            // if we get here, create new user account and bank account
+            Guid userId = Guid.NewGuid();
+            Guid bankId = Guid.NewGuid();
+
+            // add bank to memory cache, use as active bank account
+            BankAccountModel bankRequest = new BankAccountModel
+            {
+                BankID = bankId,
+                Transactions = new List<Transaction>(),
+                UserID = userId
+            };
+
+            CacheContext.BankAccounts.Add(bankRequest);
+            _instance.CurrentBankAccount = new BankAccount(bankRequest);
+
+            // add user to memory cache, use as active user
+            UserModel userRequest = new UserModel
+            {
+                UserID = userId,
+                Username = request.Username,
+                UserPasswordHash = Crypto.GetHashSalt(request.Password),
+                BankID = bankId
+            };
+
+            CacheContext.Users.Add(userRequest);
+            _instance.CurrentUser = new User(userRequest);
+
+            _instance.LoggedIn = true;
+
+            return true;
         }
 
         /// <summary>
-        /// 
+        /// Log out current user
         /// </summary>
-        /// <returns></returns>
-        public int SelectMenuItem()
+        public void PerformLogout()
         {
-            return int.Parse(Console.ReadKey().KeyChar.ToString());
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void Login()
-        {
-
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void Register()
-        {
-
+            _instance.CurrentBankAccount = null;
+            _instance.CurrentUser = null;
+            _instance.LoggedIn = false;
         }
     }
 }

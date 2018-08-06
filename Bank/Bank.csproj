@@ -34,6 +34,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -43,6 +44,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App\App.cs" />
+    <Compile Include="App\CacheContext.cs" />
+    <Compile Include="App\Crypto.cs" />
+    <Compile Include="App\Menu.cs" />
     <Compile Include="BankAccount\BankAccount.cs" />
     <Compile Include="BankAccount\IBankAccount.cs" />
     <Compile Include="Models\BankModels.cs" />
@@ -58,6 +62,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -8,9 +8,13 @@ using System.Threading.Tasks;
 
 namespace Bank.BankAccountNS
 {
+    /// <summary>
+    /// Defined interface contract of minimum BankAccount methods.
+    /// </summary>
     public interface IBankAccount
     {
-        void MakeTransaction(TransactionType type, double amount);
         double GetBalance();
+        void MakeTransaction(TransactionRequestModel request);
+        List<Transaction> GetTransactionHistory();
     }
 }
