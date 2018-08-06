@@ -51,16 +51,26 @@ namespace Bank.AppNS
         public bool PerformLogin(LoginRequestModel request)
         {
             List<UserModel> users = CacheContext.Users;
+            List<BankAccountModel> bankAccounts = CacheContext.BankAccounts;
 
+            // loop through both users and bankAccounts to find matching objects of requested login form
             if (users != null)
             {
                 foreach (UserModel user in users)
                 {
                     if (request.Username == user.Username && Crypto.GetHashSalt(request.Password) == user.UserPasswordHash)
                     {
-                        _instance.CurrentUser = new User(user);
-                        _instance.LoggedIn = true;
-                        return true;
+                        foreach (BankAccountModel account in bankAccounts)
+                        {
+                            if(account.UserID == user.UserID)
+                            {
+                                _instance.CurrentUser = new User(user);
+                                _instance.CurrentBankAccount = new BankAccount(account);
+                                _instance.LoggedIn = true;
+
+                                return true;
+                            }
+                        }
                     }
                 }
             }

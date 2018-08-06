@@ -9,6 +9,10 @@ namespace Bank.Tests
     public class BankTests
     {
 
+        public static readonly BankAccount Account = new BankAccount(new BankAccountModel
+        {
+
+        });
 
         [TestMethod]
         public void DepositUpdatesBalance()
