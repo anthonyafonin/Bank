@@ -225,10 +225,14 @@ namespace Bank.AppNS
             try 
             {
                 // Throw error if amount is not a value or amount is greater than available balance
-                decimal amount = Math.Round(decimal.Parse(Console.ReadLine()), 2);
+                decimal amount = decimal.Parse(Console.ReadLine());
                 if(type == TransactionType.Withdraw && amount > App.CurrentBankAccount.GetBalance())
                 {
                     throw new Exception("Error. Insufficient Funds.");
+                }
+                else if (amount < 0)
+                {
+                    throw new Exception("Error. Invalid Amount.");
                 }
                 else
                 {
@@ -238,7 +242,7 @@ namespace Bank.AppNS
                         Amount = amount
                     });
                     Console.WriteLine("A {0} of ${1} has been made. " +
-                        "\n\nPress Any Key to Return to Menu...", view, amount);
+                        "\n\nPress Any Key to Return to Menu...", view, Math.Round(amount, 2));
                     Console.ReadKey(true);
                 }
           
@@ -288,7 +292,7 @@ namespace Bank.AppNS
             {
                 var t = transactions[i];
                 var type = t.Type == TransactionType.Deposit ? "Deposit" : "Withdraw";
-                Console.WriteLine("\n{0}. ${1} {2} made on {3}", i, t.Amount, type, t.Created);
+                Console.WriteLine("\n{0}. ${1} {2} made on {3}", i + 1, t.Amount, type, t.Created);
             }
 
             Console.WriteLine("\n\nPress Any Key to Return to Menu...");

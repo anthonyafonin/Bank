@@ -15,7 +15,7 @@ namespace Bank.BankAccountNS
         public List<Transaction> Transactions { get; }
         public Guid UserID { get; }
 
-        // Constructor
+        // Constructors
         public BankAccount(BankAccountModel bank)
         {
             this.BankID = bank.BankID;
@@ -42,12 +42,13 @@ namespace Bank.BankAccountNS
         /// <param name="amount">Transaction Amount</param>
         public void MakeTransaction(TransactionRequestModel request)
         {
+            decimal amount = request.Amount > (decimal)0.00 ? Math.Round(request.Amount, 2) : 0;
             Transactions.Add(new Transaction(new TransactionInputModel
             {
                 TransactionID = Guid.NewGuid(),
                 Type = request.Type,
                 Created = DateTime.Now,
-                Amount = request.Amount,
+                Amount = amount,
                 BankID = this.BankID
             }));
         }

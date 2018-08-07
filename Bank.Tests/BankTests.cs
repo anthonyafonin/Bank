@@ -13,8 +13,8 @@ namespace Bank.Tests
         [TestMethod]
         public void DepositUpdatesBalance()
         {
-            decimal balance = 0;
-            decimal amount = (decimal)50.555555;
+            decimal balance = (decimal)0;
+            decimal amount = (decimal)500000000000000000;
             decimal expected = balance + amount;
 
             BankAccount Account = new BankAccount(new BankAccountModel
@@ -78,6 +78,29 @@ namespace Bank.Tests
             bool expected = amount < balance;
 
             Assert.AreEqual(expected, amount < Account.GetBalance());
+        }
+
+        [TestMethod]
+        public void TransactionAmountIsValid()
+        {
+            decimal transactionAmount = -5000000000000.5000M;
+
+            BankAccount Account = new BankAccount(new BankAccountModel
+            {
+                BankID = Guid.NewGuid(),
+                Transactions = new List<Transaction>(),
+                UserID = Guid.NewGuid()
+            });
+
+            Account.MakeTransaction(new TransactionRequestModel
+            {
+                Type = TransactionType.Deposit,
+                Amount = transactionAmount
+            });
+
+            decimal expected = 0;
+
+            Assert.AreEqual(expected, Account.GetBalance());
         }
     }
 }
