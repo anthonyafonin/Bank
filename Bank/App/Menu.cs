@@ -222,16 +222,17 @@ namespace Bank.AppNS
             Console.WriteLine("\n\t\tMake a {0}", view);
             Console.WriteLine("\nEnter transaction amount:");
 
-            try
+            try 
             {
-                decimal amount = decimal.Parse(Console.ReadLine());
+                // Throw error if amount is not a value or amount is greater than available balance
+                decimal amount = Math.Round(decimal.Parse(Console.ReadLine()), 2);
                 if(type == TransactionType.Withdraw && amount > App.CurrentBankAccount.GetBalance())
                 {
                     throw new Exception("Error. Insufficient Funds.");
                 }
                 else
                 {
-                    // make transaction
+                    // make transaction and display results
                     App.CurrentBankAccount.MakeTransaction(new TransactionRequestModel {
                         Type = type,
                         Amount = amount
@@ -244,9 +245,9 @@ namespace Bank.AppNS
             }
             catch(Exception e)
             {
-                // capture and display any error messages from input
+                // capture and display any error messages from input handling
                 string error = e.Message.Length > 0 ? e.Message + "\n" : "There was an unexpected Error.";
-                Console.WriteLine("\n{0}" + "\n\n(Press any key to Retry, Press Esc to return to Menu)", error);
+                Console.WriteLine("\n\n{0}" + "\n\n(Press any key to Retry, Press Esc to return to Menu)", error);
 
                 if (Console.ReadKey(true).Key == ConsoleKey.Escape)
                 {
