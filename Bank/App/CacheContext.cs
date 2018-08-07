@@ -16,7 +16,7 @@ namespace Bank.AppNS
     /// </summary>
     public static class CacheContext
     {
-        public static Dictionary<string, User> _users = new Dictionary<string, User>();
-        public static Dictionary<Guid, BankAccount> _bankAccounts = new Dictionary<Guid, BankAccount>();
+        public static Dictionary<string, UserModel> _users = new Dictionary<string, UserModel>();
+        public static Dictionary<Guid, BankAccountModel> _bankAccounts = new Dictionary<Guid, BankAccountModel>();
     }
 }

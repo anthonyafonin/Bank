@@ -16,13 +16,6 @@ namespace Bank.UserNS
         public Guid BankID { get; }
 
         // Constructors
-        public User(User req)
-        {
-            this.UserID = req.UserID;
-            this.Username = req.Username;
-            this.UserPasswordHash = req.UserPasswordHash;
-            this.BankID = req.BankID;
-        }
         public User(UserModel req)
         {
             this.UserID = req.UserID;

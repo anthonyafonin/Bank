@@ -53,10 +53,10 @@ namespace Bank.AppNS
             var success = false;
 
             // lookup user then login and locate assigned bank account if credentials match
-            CacheContext._users.TryGetValue(request.Username, out User user);
+            CacheContext._users.TryGetValue(request.Username, out UserModel user);
             if (CheckLoginIsValid(user, request.Password))
             {
-                CacheContext._bankAccounts.TryGetValue(user.BankID, out BankAccount bankAccount);
+                CacheContext._bankAccounts.TryGetValue(user.BankID, out BankAccountModel bankAccount);
 
                 _instance.CurrentUser = new User(user);
                 _instance.CurrentBankAccount = new BankAccount(bankAccount);
@@ -82,15 +82,17 @@ namespace Bank.AppNS
                 Guid userId = Guid.NewGuid();
                 Guid bankId = Guid.NewGuid();
 
+                // create new BankAccount instance and add to dictionary, set as current BankAccount
                 BankAccountModel bankRequest = new BankAccountModel
                 {
                     BankID = bankId,
                     Transactions = new List<Transaction>(),
                     UserID = userId
                 };
+                CacheContext._bankAccounts.Add(bankRequest.BankID, bankRequest);
                 _instance.CurrentBankAccount = new BankAccount(bankRequest);
-                CacheContext._bankAccounts.Add(bankRequest.BankID, _instance.CurrentBankAccount);
 
+                // create new User instance and add to dictionary, set as current User
                 UserModel userRequest = new UserModel
                 {
                     UserID = userId,
@@ -98,8 +100,8 @@ namespace Bank.AppNS
                     UserPasswordHash = Crypto.GetHashSalt(request.Password),
                     BankID = bankId
                 };
+                CacheContext._users.Add(userRequest.Username, userRequest);
                 _instance.CurrentUser = new User(userRequest);
-                CacheContext._users.Add(userRequest.Username, _instance.CurrentUser);
 
                 _instance.LoggedIn = true;
                 success = true;
@@ -133,10 +135,10 @@ namespace Bank.AppNS
         /// <summary>
         /// Check if user exists and if password matches user's hashed password
         /// </summary>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
-        public bool CheckLoginIsValid(User user, string password)
+        /// <param name="user">User object</param>
+        /// <param name="password">Plaintext Password request</param>
+        /// <returns>User is not null and hashed password request matches user's hashed password</returns>
+        public bool CheckLoginIsValid(UserModel user, string password)
         {
             return user != null && Crypto.GetHashSalt(password) == user.UserPasswordHash;
         }

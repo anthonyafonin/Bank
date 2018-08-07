@@ -15,13 +15,7 @@ namespace Bank.BankAccountNS
         public List<Transaction> Transactions { get; }
         public Guid UserID { get; }
 
-        // Constructors
-        public BankAccount(BankAccount bank)
-        {
-            this.BankID = bank.BankID;
-            this.Transactions = bank.Transactions;
-            this.UserID = bank.UserID;
-        }
+        // Constructor
         public BankAccount(BankAccountModel bank)
         {
             this.BankID = bank.BankID;

@@ -56,7 +56,7 @@ namespace Bank.AppNS
                     Console.WriteLine(
                         "1. Log in\n"
                         + "2. Create Account\n"
-                        + "0. Exit");
+                        + "\n0. Exit");
 
                     selection = SelectMenuItem();
 
@@ -88,7 +88,7 @@ namespace Bank.AppNS
                         + "3. Check Account Balance\n"
                         + "4. View Transaction History\n"
                         + "5. Logout\n"
-                        + "0. Exit");
+                        + "\n0. Exit");
 
                     selection = SelectMenuItem();
 
