@@ -21,7 +21,7 @@ namespace Bank.AppNS
             byte[] salt = new byte[32];
             random.GetNonZeroBytes(salt);
 
-            // generate hash from password and salt
+            // generate hash from plaintext password and salt
             var bytes = new UTF8Encoding().GetBytes(password + salt);
             byte[] hashBytes;
             using (var algorithm = new SHA512Managed())

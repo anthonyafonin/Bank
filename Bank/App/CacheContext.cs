@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using Bank.Models;
+using Bank.BankAccountNS;
 
 namespace Bank.AppNS
 {
@@ -15,7 +16,7 @@ namespace Bank.AppNS
     /// </summary>
     public static class CacheContext
     {
-        public static List<UserModel> Users = new List<UserModel>();
-        public static List<BankAccountModel> BankAccounts = new List<BankAccountModel>();
+        public static Dictionary<string, User> _users = new Dictionary<string, User>();
+        public static Dictionary<Guid, BankAccount> _bankAccounts = new Dictionary<Guid, BankAccount>();
     }
 }

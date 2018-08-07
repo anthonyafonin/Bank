@@ -79,7 +79,7 @@ namespace Bank.AppNS
                 else
                 {
                     Console.WriteLine(
-                        "\n\t\tBanking Ledger - Logged in as " + App.CurrentUser.GetUsername()
+                        "\n\t\tBanking Ledger - Logged in as " + App.CurrentUser.Username
                          + "\n\n Enter an option"
                          + "\n--------------------------\n");
                     Console.WriteLine(
@@ -224,7 +224,7 @@ namespace Bank.AppNS
 
             try
             {
-                double amount = double.Parse(Console.ReadLine());
+                decimal amount = decimal.Parse(Console.ReadLine());
                 if(type == TransactionType.Withdraw && amount > App.CurrentBankAccount.GetBalance())
                 {
                     throw new Exception("Error. Insufficient Funds.");
@@ -282,12 +282,12 @@ namespace Bank.AppNS
             Console.Clear();
             Console.WriteLine("\n\t\tTransaction History");
 
-            var transactions = App.CurrentBankAccount.GetTransactionHistory();
+            var transactions = App.CurrentBankAccount.Transactions;
             for (int i = 0; i < transactions.Count; i++)
             {
                 var t = transactions[i];
-                var type = t.GetType() == TransactionType.Deposit ? "Deposit" : "Withdraw";
-                Console.WriteLine("\n{0}. ${1} {2} made on {3}", i, t.GetAmount(), type, t.GetCreated());
+                var type = t.Type == TransactionType.Deposit ? "Deposit" : "Withdraw";
+                Console.WriteLine("\n{0}. ${1} {2} made on {3}", i, t.Amount, type, t.Created);
             }
 
             Console.WriteLine("\n\nPress Any Key to Return to Menu...");

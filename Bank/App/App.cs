@@ -50,33 +50,21 @@ namespace Bank.AppNS
         /// <returns>Returns log in success status</returns>
         public bool PerformLogin(LoginRequestModel request)
         {
-            List<UserModel> users = CacheContext.Users;
-            List<BankAccountModel> bankAccounts = CacheContext.BankAccounts;
+            var success = false;
 
-            // loop through both users and bankAccounts to find matching objects of requested login form
-            if (users != null)
+            // lookup user then login and locate assigned bank account if credentials match
+            CacheContext._users.TryGetValue(request.Username, out User user);
+            if (CheckLoginIsValid(user, request.Password))
             {
-                foreach (UserModel user in users)
-                {
-                    // if username matches and hashed password matches, find and assign bank account to current instance
-                    if (request.Username == user.Username && Crypto.GetHashSalt(request.Password) == user.UserPasswordHash)
-                    {
-                        foreach (BankAccountModel account in bankAccounts)
-                        {
-                            if(account.UserID == user.UserID)
-                            {
-                                _instance.CurrentUser = new User(user);
-                                _instance.CurrentBankAccount = new BankAccount(account);
-                                _instance.LoggedIn = true;
+                CacheContext._bankAccounts.TryGetValue(user.BankID, out BankAccount bankAccount);
 
-                                return true;
-                            }
-                        }
-                    }
-                }
+                _instance.CurrentUser = new User(user);
+                _instance.CurrentBankAccount = new BankAccount(bankAccount);
+                _instance.LoggedIn = true;
+                success = true;
             }
 
-            return false;
+            return success;
         }
 
         /// <summary>
@@ -86,54 +74,37 @@ namespace Bank.AppNS
         /// <returns>Register success status</returns>
         public bool PerformRegister(RegisterRequestModel request)
         {
-            if (request.Password != request.ConfirmPassword || request.Password.Length < 7)
-            {
-                return false;
-            }
+            var success = false;
 
-            List<UserModel> users = CacheContext.Users;
-
-            if(users != null)
+            // Create new account if registration meets validation
+            if(CheckRegisterIsValid(request.Username, request.Password, request.ConfirmPassword))
             {
-                foreach (var item in users)
+                Guid userId = Guid.NewGuid();
+                Guid bankId = Guid.NewGuid();
+
+                BankAccountModel bankRequest = new BankAccountModel
                 {
-                    if (request.Username == item.Username)
-                    {
-                        return false;
-                    }
-                }
+                    BankID = bankId,
+                    Transactions = new List<Transaction>(),
+                    UserID = userId
+                };
+                _instance.CurrentBankAccount = new BankAccount(bankRequest);
+                CacheContext._bankAccounts.Add(bankRequest.BankID, _instance.CurrentBankAccount);
+
+                UserModel userRequest = new UserModel
+                {
+                    UserID = userId,
+                    Username = request.Username,
+                    UserPasswordHash = Crypto.GetHashSalt(request.Password),
+                    BankID = bankId
+                };
+                _instance.CurrentUser = new User(userRequest);
+                CacheContext._users.Add(userRequest.Username, _instance.CurrentUser);
+
+                _instance.LoggedIn = true;
+                success = true;
             }
-
-            // if we get here, create new user account and bank account
-            Guid userId = Guid.NewGuid();
-            Guid bankId = Guid.NewGuid();
-
-            // add bank to memory cache, use as active bank account
-            BankAccountModel bankRequest = new BankAccountModel
-            {
-                BankID = bankId,
-                Transactions = new List<Transaction>(),
-                UserID = userId
-            };
-
-            CacheContext.BankAccounts.Add(bankRequest);
-            _instance.CurrentBankAccount = new BankAccount(bankRequest);
-
-            // add user to memory cache, use as active user
-            UserModel userRequest = new UserModel
-            {
-                UserID = userId,
-                Username = request.Username,
-                UserPasswordHash = Crypto.GetHashSalt(request.Password),
-                BankID = bankId
-            };
-
-            CacheContext.Users.Add(userRequest);
-            _instance.CurrentUser = new User(userRequest);
-
-            _instance.LoggedIn = true;
-
-            return true;
+            return success;
         }
 
         /// <summary>
@@ -144,6 +115,30 @@ namespace Bank.AppNS
             _instance.CurrentBankAccount = null;
             _instance.CurrentUser = null;
             _instance.LoggedIn = false;
+        }
+
+        /// <summary>
+        /// Check validity of registration. 
+        /// Return false if username exists or password does not meet requirements.
+        /// </summary>
+        /// <param name="username">Desired username</param>
+        /// <param name="password">Password</param>
+        /// <param name="confirmPassword">Confirmed Password</param>
+        /// <returns>Registration status</returns>
+        public bool CheckRegisterIsValid(string username, string password, string confirmPassword)
+        {
+            return !(CacheContext._users.ContainsKey(username) || (password != confirmPassword || password.Length < 7));
+        }
+
+        /// <summary>
+        /// Check if user exists and if password matches user's hashed password
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public bool CheckLoginIsValid(User user, string password)
+        {
+            return user != null && Crypto.GetHashSalt(password) == user.UserPasswordHash;
         }
     }
 }

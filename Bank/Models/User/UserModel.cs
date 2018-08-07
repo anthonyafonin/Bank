@@ -13,16 +13,4 @@ namespace Bank.Models
         public string UserPasswordHash { get; set; }
         public Guid BankID { get; set; }
     }
-    public class LoginRequestModel
-    {
-        public string Username { get; set; }
-        public string Password { get; set; }
-    }
-
-    public class RegisterRequestModel
-    {
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string ConfirmPassword { get; set; }
-    }
 }

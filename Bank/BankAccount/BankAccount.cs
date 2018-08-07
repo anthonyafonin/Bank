@@ -11,11 +11,17 @@ namespace Bank.BankAccountNS
     public class BankAccount : IBankAccount
     {
         // BankAccount properties
-        private Guid BankID { get; set; }
-        private List<Transaction> Transactions { get; set; }
-        private Guid UserID { get; set; }
+        public Guid BankID { get; }
+        public List<Transaction> Transactions { get; }
+        public Guid UserID { get; }
 
-        // Constructor
+        // Constructors
+        public BankAccount(BankAccount bank)
+        {
+            this.BankID = bank.BankID;
+            this.Transactions = bank.Transactions;
+            this.UserID = bank.UserID;
+        }
         public BankAccount(BankAccountModel bank)
         {
             this.BankID = bank.BankID;
@@ -28,10 +34,10 @@ namespace Bank.BankAccountNS
         /// Subtract sum of withdraw values from sum of deposit values.
         /// </summary>
         /// <returns>Resturns available balance</returns>
-        public double GetBalance()
+        public decimal GetBalance()
         {
-            double depositBalance = Transactions.Where(t => t.GetType() == TransactionType.Deposit).Sum(t => t.GetAmount());
-            double withdrawBalance = Transactions.Where(t => t.GetType() == TransactionType.Withdraw).Sum(t => t.GetAmount());
+            decimal depositBalance = Transactions.Where(t => t.Type == TransactionType.Deposit).Sum(t => t.Amount);
+            decimal withdrawBalance = Transactions.Where(t => t.Type == TransactionType.Withdraw).Sum(t => t.Amount);
             return (depositBalance - withdrawBalance);
         }
 
@@ -42,7 +48,7 @@ namespace Bank.BankAccountNS
         /// <param name="amount">Transaction Amount</param>
         public void MakeTransaction(TransactionRequestModel request)
         {
-            Transactions.Add(new Transaction(new TransactionModel
+            Transactions.Add(new Transaction(new TransactionInputModel
             {
                 TransactionID = Guid.NewGuid(),
                 Type = request.Type,
@@ -51,11 +57,5 @@ namespace Bank.BankAccountNS
                 BankID = this.BankID
             }));
         }
-
-        /// <summary>
-        /// Get list of transactions
-        /// </summary>
-        /// <returns>Returns Transaction list</returns>
-        public List<Transaction> GetTransactionHistory() => Transactions;
     }
 }

@@ -13,9 +13,9 @@ namespace Bank.Tests
         [TestMethod]
         public void DepositUpdatesBalance()
         {
-            double balance = 0;
-            double amount = 50.55;
-            double expected = balance + amount;
+            decimal balance = 0;
+            decimal amount = (decimal)50.555555;
+            decimal expected = balance + amount;
 
             BankAccount Account = new BankAccount(new BankAccountModel
             {
@@ -36,9 +36,9 @@ namespace Bank.Tests
         [TestMethod]
         public void WithdrawDoesNotUpdateBalance()
         {
-            double balance = 0;
-            double withdrawAmount = 50.55;
-            double expected = balance;
+            decimal balance = 0;
+            decimal withdrawAmount = (decimal)50.555555;
+            decimal expected = balance;
 
             BankAccount Account = new BankAccount(new BankAccountModel
             {
@@ -59,8 +59,8 @@ namespace Bank.Tests
         [TestMethod]
         public void WithdrawIsLessThanBalance()
         {
-            double balance = 0;
-            double amount = 50.55;
+            decimal balance = 0;
+            decimal amount = (decimal)50.555555;
 
             BankAccount Account = new BankAccount(new BankAccountModel
             {

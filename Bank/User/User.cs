@@ -10,12 +10,19 @@ namespace Bank.UserNS
     public class User
     {
         // User Properties
-        private Guid UserID { get; set; }
-        private string Username { get; set; }
-        private string UserPasswordHash { get; set; }
-        private Guid BankID { get; set; }
+        public Guid UserID { get; }
+        public string Username { get;}
+        public string UserPasswordHash { get; }
+        public Guid BankID { get; }
 
-        // Constructor
+        // Constructors
+        public User(User req)
+        {
+            this.UserID = req.UserID;
+            this.Username = req.Username;
+            this.UserPasswordHash = req.UserPasswordHash;
+            this.BankID = req.BankID;
+        }
         public User(UserModel req)
         {
             this.UserID = req.UserID;
@@ -23,11 +30,5 @@ namespace Bank.UserNS
             this.UserPasswordHash = req.UserPasswordHash;
             this.BankID = req.BankID;
         }
-
-        /// <summary>
-        /// Get Username
-        /// </summary>
-        /// <returns>Username</returns>
-        public string GetUsername() => Username;
     }
 }

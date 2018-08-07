@@ -11,27 +11,27 @@ namespace Bank.Tests
         [TestMethod]
         public void GetAmountReturnsValue()
         {
-            double amount = 50.55;
-            Transaction transaction = new Transaction(new TransactionModel
+            decimal amount = (decimal)50.555555;
+            Transaction transaction = new Transaction(new TransactionInputModel
             {
                 Type = TransactionType.Deposit,
                 Amount = amount
             });
 
-            Assert.AreEqual(amount, transaction.GetAmount());
+            Assert.AreEqual(amount, transaction.Amount);
         }
 
         [TestMethod]
         public void GetTypeReturnsTransactionType()
         {
-            double amount = 50.55;
-            Transaction transaction = new Transaction(new TransactionModel
+            decimal amount = (decimal)50.555555;
+            Transaction transaction = new Transaction(new TransactionInputModel
             {
                 Type = TransactionType.Deposit,
                 Amount = amount
             });
 
-            Assert.AreEqual(TransactionType.Deposit, transaction.GetType());
+            Assert.AreEqual(TransactionType.Deposit, transaction.Type);
         }
     }
 }

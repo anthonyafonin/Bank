@@ -7,7 +7,7 @@ namespace Bank
     {
         public static void Main(string[] args)
         {
-            // Instantiate and Initialize applciation
+            // Instantiate and Initialize application
             Menu Menu = new Menu(App.GetApp());
             Menu.Initialize();
         }
